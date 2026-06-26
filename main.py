@@ -49,5 +49,46 @@ def load_documents():  #os.listdir() returns a list of all filenames in the fold
                     text+=page_text    #extract text from each
         if text.strip():   #check if there is any text
             documents.append({"filename":file_name,"text":text})
-                              
-            
+   
+#---------------------------------------------------------------------------------
+#split documents into chunks
+#---------------------------------------------------------------------------------
+def split_documents(chunk_size=500,overlap=100):
+    for document in documents:
+        text=document['text']
+        source=document['file_name']
+        step=chunk_size-overlap  #number of characters to skip between  
+#Why overlap matters: If an answer spans the boundary between two chunks,
+#the overlap ensures it's fully captured in at least one chunk — without it you'd lose context at chunk boundaries.        
+        for i in range(0,len(text),step):
+            chunk=text[i:i+chunk_size]
+            if chunk.strip():    #check if there is any text
+                chunks.append({"content":chunk,"source":source})                                
+ #-----------------------------------------------------------------------------------
+ # TF-IDF Vectors
+ # ----------------------------------------------------------------------------------
+def create_vectors():
+    global vectorizer  #applyingglobal vectorizer
+    global chunk_vectors  #applying chunk_vectors
+    texts=[chunk['content'] for chunk in chunks]  #extracting container
+    vectorizer=TfidfVectorizer(sublinear_tf=True)
+    chunk_vectors=vectorizer.fit_transform(texts)
+#-------------------------------------------------------------------------------------
+# Retreive relevant chunks
+#-------------------------------------------------------------------------------------
+def retrieve_chunks(query, top_k=3):
+    query_vector = vectorizer.transform([query])  # convert query string into TF-IDF vector
+    similarities = cosine_similarity(query_vector, chunk_vectors).flatten()  # calculate similarity score between query and every chunk vector, flatten to 1D array
+    ranked_indices = similarities.argsort()[::-1]  # sort indices by similarity score in descending order (highest first)
+    threshold = 0.10  # minimum similarity score to consider a chunk relevant
+    best_per_doc = {}  # store best matching chunk per document to avoid returning multiple chunks from same source
+    for idc in ranked_indices:
+        score = similarities[idc]  # get similarity score for current chunk
+        if score < threshold:  # stop if remaining chunks are below relevance threshold
+            break
+        chunk = chunks[idc]  # get the actual chunk dictionary at this index
+        source = chunk["source"]  # get the source filename of this chunk
+        if source not in best_per_doc:  # only keep the best chunk per document (first one is best since we sorted descending)
+            best_per_doc[source] = {"content": chunk["content"], "score": score}  # store chunk content and score
+    selected = sorted(best_per_doc.values(), key=lambda x: x['score'], reverse=True)[:top_k]  # sort by score and return top_k results
+    return selected  # returns list of top_k most relevant chunks across documents

@@ -4,6 +4,15 @@ A command-line and web-based Retrieval-Augmented Generation (RAG) system built u
 
 ---
 
+![Python](https://img.shields.io/badge/Python-3.10+-blue?logo=python)
+![Streamlit](https://img.shields.io/badge/Streamlit-1.x-red?logo=streamlit)
+![Groq](https://img.shields.io/badge/Groq-LLaMA3.1-orange)
+![scikit-learn](https://img.shields.io/badge/scikit--learn-TF--IDF-blue?logo=scikit-learn)
+![MarkItDown](https://img.shields.io/badge/MarkItDown-Microsoft-blue)
+![License](https://img.shields.io/badge/License-MIT-green)
+
+---
+
 ## Abstract
 
 This project implements a document-based question answering system using the Retrieval-Augmented Generation (RAG) architecture. It is built with Python and powered by Groq's LLaMA 3.1 8B model.
@@ -256,6 +265,23 @@ This project helped demonstrate:
 - Multi-model selection
 - Reranking retrieved chunks before LLM call
 - Deployment using Docker and cloud platforms
+
+---
+## Design Decisions
+
+### Why TF-IDF instead of Dense Embeddings?
+
+This implementation intentionally uses TF-IDF over dense embeddings (FAISS + sentence-transformers) to demonstrate the classical retrieval stage of a RAG pipeline.
+
+**Advantages:**
+- Fast and lightweight — no embedding model required
+- No GPU needed
+- Easy to understand and debug
+- Sufficient for keyword-heavy documents like question banks
+
+**Known Limitation:**
+- Semantic queries ("What is a transformer model?") may retrieve wrong chunks since TF-IDF matches keywords, not meaning
+- Future versions will migrate to FAISS + sentence-transformers for semantic search
 
 ---
 

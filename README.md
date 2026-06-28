@@ -197,11 +197,11 @@ cp /path/to/yourfile.pdf documents/
 
 ### Run the Application
 
-# CLI
+**CLI:**
 ```bash
 python main.py
 ```
-# Web UI
+**Web UI:**
 ```bash
 streamlit run app.py
 ```

@@ -1,6 +1,6 @@
 # Title: Agentic RAG with Groq
 
-A command-line Retrieval-Augmented Generation (RAG) system built using Python, Groq's LLaMA 3.1 model, TF-IDF retrieval, and an agentic decision layer. The system loads documents, chunks and indexes them, and answers user queries by retrieving relevant context and generating accurate responses.
+A command-line and web-based Retrieval-Augmented Generation (RAG) system built using Python, Groq's LLaMA 3.1 model, TF-IDF retrieval,Streamlit UI and an agentic decision layer. The system loads documents, chunks and indexes them, and answers user queries by retrieving relevant context and generating accurate responses.
 
 ---
 
@@ -80,6 +80,7 @@ This project demonstrates core RAG concepts including document chunking, TF-IDF 
 agentic-rag-groq/
 │
 ├── main.py
+├── app.py
 ├── requirements.txt
 ├── complete_architecture.txt
 │
@@ -97,6 +98,7 @@ agentic-rag-groq/
 ### File Description
 
 - **main.py** — Core pipeline: document loading, chunking, TF-IDF indexing, retrieval, agentic routing, pronoun resolution, and Groq LLM integration.
+- **app.py** — Streamlit web interface with file uploader, chat history display, and source attribution.
 - **requirements.txt** — Python dependencies.
 - **complete_architecture.txt** — Detailed system architecture notes.
 - **documents/** — Folder for user-provided PDF and TXT files. Not tracked by git.
@@ -107,6 +109,9 @@ agentic-rag-groq/
 ---
 
 ## Technologies Used
+
+### Frontend
+- Streamlit
 
 ### Backend
 - Python
@@ -134,6 +139,7 @@ agentic-rag-groq/
 - Multi-turn conversational context via chat history buffer
 - Secure API key management using environment variables
 - MarkItDown-powered PDF extraction for cleaner text quality
+- Streamlit web interface with chat history and file uploader
 
 ---
 
@@ -191,14 +197,19 @@ cp /path/to/yourfile.pdf documents/
 
 ### Run the Application
 
+# CLI
 ```bash
 python main.py
 ```
-
+# Web UI
+```bash
+streamlit run app.py
+```
 ---
 
 ## Usage
 
+### CLI
 1. Place your PDF or TXT files in the `documents/` folder.
 2. Run `python main.py`.
 3. The system loads, chunks, and indexes all documents.
@@ -207,6 +218,16 @@ python main.py
 6. Relevant chunks are retrieved and passed to LLaMA 3.1.
 7. The answer and source filename are displayed.
 8. Type `quit` or `exit` to stop.
+
+### Web UI (Streamlit)
+1. Run `streamlit run app.py`.
+2. Upload PDFs via the sidebar or place them in the `documents/` folder.
+3. Click **Load Documents** to index them.
+4. Ask questions in the chat input.
+5. The agent decides whether to search documents or calculate.
+6. Relevant chunks are retrieved and passed to LLaMA 3.1.
+7. The answer and source are displayed in the chat.
+8. Use **Clear Chat** in the sidebar to reset the conversation.
 
 ---
 
@@ -230,7 +251,6 @@ This project helped demonstrate:
 ## Future Improvements
 
 - Replace TF-IDF with semantic embeddings (FAISS + sentence-transformers)
-- Flask web interface for browser-based interaction
 - Persistent chat history using a database
 - Streaming responses
 - Multi-model selection
